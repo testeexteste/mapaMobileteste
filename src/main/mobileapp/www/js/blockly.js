@@ -1,1 +1,13 @@
-window.blockly = window.blockly || {};window.blockly.js = window.blockly.js || {};window.blockly.js.blockly = window.blockly.js.blockly || {};window.translations = window.translations || {};window.translations.localesKeys = ['en_us','pt_br'];window.translations.localesRef =  {"en*":"en_us","*":"pt_br","pt*":"pt_br"};document.write("<script src='js/blockly/APIGoogleMaps.blockly.js?1550495229893'></script>");document.write("<script src='js/blockly/auth/Login.blockly.js?1550495229900'></script>");document.write("<script src='js/blockly/auth/ChangePassword.blockly.js?1550495229906'></script>");document.write("<script src='js/blockly/auth/Home.blockly.js?1550495229916'></script>");
+window.fixedTimeZone = true;
+window.timeZone = 'UTC';
+window.timeZoneOffset = 0;
+window.blockly = window.blockly || {};
+window.blockly.js = window.blockly.js || {};
+window.blockly.js.blockly = window.blockly.js.blockly || {};
+window.translations = window.translations || {};
+window.translations.localesKeys = ['pt_br','en_us'];
+window.translations.localesRef =  {"pt*":"pt_br","*":"pt_br","en*":"en_us"};
+document.write("<script src='js/blockly/APIGoogleMaps.blockly.js?1573047950089'></script>");
+document.write("<script src='js/blockly/auth/ChangePassword.blockly.js?1573045131055'></script>");
+document.write("<script src='js/blockly/auth/Home.blockly.js?1573045121009'></script>");
+document.write("<script src='js/blockly/auth/Login.blockly.js?1573045077666'></script>");

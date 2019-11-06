@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><blockly formTarget="src/main/mobileapp/www/views/logged/mapa.view.html" resourceType="JS" ruleDescription="APIGoogleMaps" ruleName="APIGoogleMaps" ruleSynchronous="false" ruleTimeout="300" ruleType="I">
-  <metadata scale="1.0749542399999998" scrollx="1001.7778932962519" scrolly="-28.46442476636537" target="tUvGHr`mIM{crL4KbMV*"/>
+<?xml version="1.0" encoding="UTF-8"?><blockly bpmnAble="false" formTarget="src/main/mobileapp/www/views/logged/mapa.view.html" resourceType="JS" ruleDescription="APIGoogleMaps" ruleName="APIGoogleMaps" ruleSynchronous="false" ruleTimeout="300" ruleType="I">
+  <metadata scale="1" scrollx="835.3999999999997" scrolly="-5.800000000000011" target="h%2t:*@fX6#(?%rFW5#-"/>
   <block colour="#995ba5" id="!WHZZ=/on7a7tZPeytcH" origintype="procedures_defnoreturn" output="false" tooltip="Cria uma função que não tem retorno." type="procedures_defnoreturn" x="-757" y="68">
     <field name="NAME">AutoCompletarSaida</field>
     <comment h="80" pinned="false" w="160">Descreva esta função...</comment>
@@ -202,6 +202,11 @@
                 <next>
                   <block colour="#995ba5" dependencyby="Anb:u5+^,0vLkL9QIqn5" id="0fzL`G-#o09{4c7Co]Y6" origintype="procedures_callnoreturn" output="false" tooltip="Executa a função definida pelo usuário &quot;AutoCompletarDestino&quot;." type="procedures_callnoreturn">
                     <mutation name="AutoCompletarDestino" return-raw-type="undefined"/>
+                    <next>
+                      <block colour="#995ba5" dependencyby="Anb:u5+^,0vLkL9QIqn5" id="!YY5KlWn:@y8i$}tZeER" origintype="procedures_callnoreturn" output="false" tooltip="Executa a função definida pelo usuário &quot;Adicionar marcador&quot;." type="procedures_callnoreturn">
+                        <mutation name="Adicionar marcador" return-raw-type="undefined"/>
+                      </block>
+                    </next>
                   </block>
                 </next>
               </block>
@@ -477,7 +482,7 @@
         </value>
         <value name="ARG4">
           <shadow colour="#5ba593" dependencyby="h%2t:*@fX6#(?%rFW5#-" id="`G%4s,|%hKj69HVAzxw(" origintype="text" output="true" tooltip="function () { [native code] }" type="text">
-            <field name="TEXT">../views/logged/img/logo-cronapp.png</field>
+            <field name="TEXT">cronapp-nuvem.png</field>
           </shadow>
         </value>
         <value name="ARG5">
@@ -783,7 +788,7 @@
       </block>
     </statement>
   </block>
-  <block colour="#995ba5" dependencyby="Anb:u5+^,0vLkL9QIqn5" id="@z5]F87kcS|EYM#xlUy=" origintype="procedures_callnoreturn" output="false" tooltip="Executa a função definida pelo usuário &quot;AutoCompletarSaida&quot;." type="procedures_callnoreturn" x="-473" y="383">
+  <block colour="#995ba5" dependencyby="Anb:u5+^,0vLkL9QIqn5" id="@z5]F87kcS|EYM#xlUy=" origintype="procedures_callnoreturn" output="false" tooltip="Executa a função definida pelo usuário &quot;AutoCompletarSaida&quot;." type="procedures_callnoreturn" x="-352" y="383">
     <mutation name="AutoCompletarSaida" return-raw-type="undefined"/>
     <next>
       <block colour="#995ba5" dependencyby="Anb:u5+^,0vLkL9QIqn5" id="iuVk+NIfk5.0WULi%EpI" origintype="procedures_callnoreturn" output="false" tooltip="Executa a função definida pelo usuário &quot;AutoCompletarDestino&quot;." type="procedures_callnoreturn">
@@ -791,11 +796,6 @@
         <next>
           <block colour="#995ba5" dependencyby="Anb:u5+^,0vLkL9QIqn5" id="D:$EW0TYJMSJg1$*61Yb" origintype="procedures_callnoreturn" output="false" tooltip="Executa a função definida pelo usuário &quot;Adicionar marcador&quot;." type="procedures_callnoreturn">
             <mutation name="Adicionar marcador" return-raw-type="undefined"/>
-            <next>
-              <block colour="#995ba5" dependencyby="Anb:u5+^,0vLkL9QIqn5" id="!YY5KlWn:@y8i$}tZeER" origintype="procedures_callnoreturn" output="false" tooltip="Executa a função definida pelo usuário &quot;Adicionar marcador&quot;." type="procedures_callnoreturn">
-                <mutation name="Adicionar marcador" return-raw-type="undefined"/>
-              </block>
-            </next>
           </block>
         </next>
       </block>

@@ -10,13 +10,23 @@ var cronappModules = [
     'tmh.dynamicLocale',
     'ui-notification',
     'ngFileUpload',
-    'angularMoment'
-]
+    'angularMoment',
+    'upload.services',
+];
 
 if (window.customModules) {
     cronappModules = cronappModules.concat(window.customModules);
 }
 
+window.paceOptions = {
+  document: true,
+  eventLag: true,
+  restartOnPushState: true,
+  restartOnRequestAfter: true,
+  ajax: {
+    trackMethods: [ "PUT", "POST" , "GET"]
+  }
+};
 
 var app = (function() {
 
@@ -49,6 +59,18 @@ var app = (function() {
                     // org.apache.cordova.statusbar required
                     StatusBar.styleDefault();
                 }
+
+              // Fix for iPhone X/XS screen rotation issue
+              // https://stackoverflow.com/questions/53290178/cordova-iphone-x-safe-area-after-layout-orientation-changes
+              if(ionic.Platform.is('ios')){
+                window.addEventListener("orientationchange", function() {
+                  var originalMarginTop = document.body.style.marginTop;
+                  document.body.style.marginTop = "1px";
+                  setTimeout(function () {
+                    document.body.style.marginTop = originalMarginTop;
+                  }, 100);
+                }, false);
+              }
             });
         })
         .config([
@@ -57,15 +79,29 @@ var app = (function() {
                 var interceptor = [
                     '$q',
                     '$rootScope',
-                    function($q, $rootScope) {
+                    '$injector',
+                    function($q, $rootScope, $injector) {
                         var service = {
-                            'request': function(config) {
+                            request: function(config) {
                                 var _u = JSON.parse(localStorage.getItem('_u'));
                                 if (_u && _u.token) {
                                     config.headers['X-AUTH-TOKEN'] = _u.token;
                                     window.uToken = _u.token;
                                 }
                                 return config;
+                            },
+                            responseError: function(error) {
+                                if (error.status === 500) {
+                                    // Verify if token is still valid
+                                    let $state = $injector.get('$state');
+                                    let $http = $injector.get('$http');
+                                    let Notification = $injector.get('Notification');
+                                    $rootScope.refreshToken(Notification, $http, ()=>{}, ()=>{
+                                        localStorage.removeItem("_u")
+                                        $state.go("login");
+                                    });
+                                }
+                                return $q.reject(error);
                             }
                         };
                         return service;
@@ -75,7 +111,11 @@ var app = (function() {
             }
         ])
         .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
-            $ionicConfigProvider.navBar.alignTitle('center')
+            $ionicConfigProvider.navBar.alignTitle('center');
+            $ionicConfigProvider.tabs.position('bottom');
+            if(ionic.Platform.isIOS()) {
+              $ionicConfigProvider.scrolling.jsScrolling(false);
+            }
         })
         .config(function($stateProvider, $urlRouterProvider, NotificationProvider) {
             NotificationProvider.setOptions({
@@ -87,7 +127,6 @@ var app = (function() {
                 positionX: 'right',
                 positionY: 'top'
             });
-
             if (window.customStateProvider) {
                 window.customStateProvider($stateProvider);
             }
@@ -101,7 +140,8 @@ var app = (function() {
                         controller: 'InitialController',
                         templateUrl: function (urlattr) {
                             if(navigator.app){
-                                navigator.app.exitApp();
+                                // The code bellow is causing force close on devices running chromium WebView
+                                // navigator.app.exitApp();
                             }
                             return '';
                         }
@@ -158,6 +198,11 @@ var app = (function() {
                                 controller: 'PageController',
                                 templateUrl: 'views/logged/home.view.html'
                             }
+                        },
+                        resolve: {
+                          data: function ($translate) {
+                            $translate.refresh();
+                          }
                         }
                     })
 
@@ -219,6 +264,9 @@ var app = (function() {
             $translateProvider.useSanitizeValueStrategy('escaped');
 
             tmhDynamicLocaleProvider.localeLocationPattern('plugins/angular-i18n/angular-locale_{{locale}}.js');
+        })
+        .config(function($sceProvider) {
+          $sceProvider.enabled(false);
         })
 
         .directive('crnValue', ['$parse', function($parse) {
@@ -310,6 +358,7 @@ var app = (function() {
                 }, 300);
 
             });
+            setInterval(() => $('ion-nav-view[name="menuContent"] .button.button-clear.hide').removeClass('hide'), 300);
         });
 
 }(window));
@@ -327,7 +376,7 @@ app.bindScope = function($scope, obj) {
     for (var x in obj) {
         // var name = parentName+'.'+x;
         // console.log(name);
-        if (typeof obj[x] == 'string')
+        if (typeof obj[x] == 'string' || typeof obj[x] == 'boolean')
             newObj[x] = obj[x];
         else if (typeof obj[x] == 'function')
             newObj[x] = obj[x].bind($scope);
@@ -344,6 +393,7 @@ app.registerEventsCronapi = function($scope, $translate, $ionicModal, $ionicLoad
         $scope[x] = app.userEvents[x].bind($scope);
 
     $scope.vars = {};
+    $scope.$evt = $evt;
 
     try {
         if (cronapi) {
@@ -362,12 +412,25 @@ app.registerEventsCronapi = function($scope, $translate, $ionicModal, $ionicLoad
         console.info(e);
     }
     try {
-        if (blockly)
-            $scope['blockly'] = app.bindScope($scope, blockly);
+      if (blockly) {
+        blockly.cronapi = cronapi;
+        $scope['blockly'] = app.bindScope($scope, blockly);
+      }
     } catch (e) {
         console.info('Not loaded blockly functions');
         console.info(e);
     }
+};
+
+app.copyContext = function(fromContext, toContext, controllerName) {
+  if (fromContext) {
+    for (var item in fromContext) {
+      if (!toContext[item])
+        toContext[item] = fromContext[item];
+      else
+        toContext[item+controllerName] = fromContext[item];
+    }
+  }
 };
 
 app.factory('customTranslateLoader', function ($http, $q) {

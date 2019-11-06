@@ -23,6 +23,11 @@ if (window.customModules) {
   cronappModules = cronappModules.concat(window.customModules);
 }
 
+var onloadCallback = function() {
+  window.grecaptcha.render('loginRecaptcha');
+  window.grecaptcha.reset();
+};
+
 var app = (function() {
 
   return angular.module('MyApp', cronappModules)
@@ -125,7 +130,12 @@ var app = (function() {
               .state('home', {
                 url: "/home",
                 controller: 'HomeController',
-                templateUrl: 'views/logged/home.view.html'
+                templateUrl: 'views/logged/home.view.html',
+                resolve: {
+                  data: function ($translate) {
+                    $translate.refresh();
+                  }
+                }
               })
 
               .state('home.pages', {
@@ -198,27 +208,48 @@ var app = (function() {
         if (moment)
           moment.locale(locale);
       })
+      .config(function($sceProvider) {
+        $sceProvider.enabled(false);
+      })
 
       .directive('crnValue', ['$parse', function($parse) {
         return {
           restrict: 'A',
           require: '^ngModel',
-          link: function(scope, element, attr, ngModel) {
+          link: function(scope, element, attr, ngModelCtrl) {
             var evaluatedValue;
             if (attr.value) {
               evaluatedValue = attr.value;
             } else {
               evaluatedValue = $parse(attr.crnValue)(scope);
             }
+
             element.attr("data-evaluated", JSON.stringify(evaluatedValue));
             element.bind("click", function(event) {
               scope.$apply(function() {
-                ngModel.$setViewValue(evaluatedValue);
+                ngModelCtrl.$setViewValue(evaluatedValue);
+                $(element).data('changed', true);
               }.bind(element));
             });
+
+            scope.$watch(function(){return ngModelCtrl.$modelValue}, function(value, old){
+              if (value !== old) {
+                var dataEvaluated = element.attr("data-evaluated");
+                var changed = $(element).data('changed');
+                $(element).data('changed', false);
+                if (!changed) {
+                  if (value && JSON.stringify(''+value) === dataEvaluated) {
+                    $(element)[0].checked = true
+                  } else {
+                    $(element)[0].checked = false;
+                  }
+                }
+              }
+            });           
           }
         };
       }])
+	  
       .decorator("$xhrFactory", [
         "$delegate", "$injector",
         function($delegate, $injector) {
@@ -233,12 +264,13 @@ var app = (function() {
         }
       ])
       // General controller
-      .controller('PageController', function($controller, $scope, $stateParams, $location, $http, $rootScope, $translate, Notification, UploadService) {
+      .controller('PageController', function($controller, $scope, $stateParams, $location, $http, $rootScope, $translate, Notification, UploadService, $timeout, $state) {
         // save state params into scope
         $scope.params = $stateParams;
         $scope.$http = $http;
         $scope.Notification = Notification;
         $scope.UploadService = UploadService;
+        $scope.$state = $state;
 
         app.registerEventsCronapi($scope, $translate);
         
@@ -258,15 +290,22 @@ var app = (function() {
             var index = $(currentCarousel + ' .carousel-indicators li').index(this);
             $(currentCarousel + ' #carousel-example-generic').carousel(index);
           });
-        }
+        };
 
         $scope.registerComponentScripts();
 
         try {
           var contextAfterPageController = $controller('AfterPageController', { $scope: $scope });
           app.copyContext(contextAfterPageController, this, 'AfterPageController');
-        } catch(e) {};
-        try { if ($scope.blockly.events.afterPageRender) $scope.blockly.events.afterPageRender(); } catch(e) {};
+        } catch(e) {}
+
+        $timeout(function () {
+          // Verify if the 'afterPageRender' event is defined and it is a function (it can be a string pointing to a non project blockly) and run it.
+          if ($scope.blockly && $scope.blockly.events && $scope.blockly.events.afterPageRender && $scope.blockly.events.afterPageRender instanceof Function) {
+            $scope.blockly.events.afterPageRender();
+          }
+        });
+
       })
 
       .run(function($rootScope, $state) {
@@ -295,7 +334,7 @@ app.bindScope = function($scope, obj) {
   var newObj = {};
 
   for (var x in obj) {
-    if (typeof obj[x] == 'string')
+    if (typeof obj[x] == 'string' || typeof obj[x] == 'boolean')
       newObj[x] = obj[x];
     else if (typeof obj[x] == 'function')
       newObj[x] = obj[x].bind($scope);
@@ -312,6 +351,7 @@ app.registerEventsCronapi = function($scope, $translate) {
     $scope[x] = app.userEvents[x].bind($scope);
 
   $scope.vars = {};
+  $scope.$evt = $evt;
 
   try {
     if (cronapi) {
@@ -327,8 +367,10 @@ app.registerEventsCronapi = function($scope, $translate) {
     console.info(e);
   }
   try {
-    if (blockly)
+    if (blockly) {
+      blockly.cronapi = cronapi;
       $scope['blockly'] = app.bindScope($scope, blockly);
+    }
   } catch (e) {
     console.info('Not loaded blockly functions');
     console.info(e);
@@ -408,6 +450,7 @@ app.factory('customTranslateLoader', function ($http, $q) {
       }
 
       deferred.resolve(mergedData);
+
     }, function (data) {
       deferred.reject(data);
     });
@@ -419,7 +462,7 @@ app.factory('customTranslateLoader', function ($http, $q) {
 
 window.safeApply = function(fn) {
   var phase = this.$root.$$phase;
-  if (phase == '$apply' || phase == '$digest') {
+  if (phase === '$apply' || phase === '$digest') {
     if (fn && (typeof(fn) === 'function')) {
       fn();
     }

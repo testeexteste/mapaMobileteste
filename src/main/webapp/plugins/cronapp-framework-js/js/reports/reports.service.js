@@ -120,6 +120,7 @@
       var heightRepo = (h - 200) + "px";
 
       var options = new Stimulsoft.Viewer.StiViewerOptions();
+      options.toolbar.showAboutButton = false;
       if (config) {
         options.toolbar.visible = config.showToolbar;
         options.appearance.scrollbarsMode = config.showScrollbar;
@@ -284,6 +285,19 @@
       return parameters;
     };
 
+    this.setVariablesBasedOnParams = function(variablesReference, variables){
+      for(var variableIndex in variables){
+        var variableName = Object.keys(variables[variableIndex])[0];
+        var variableValue = variables[variableIndex][variableName];
+        for(var variableReferenceKey in variablesReference){
+          if(variablesReference[variableReferenceKey] && variablesReference[variableReferenceKey].Name && variablesReference[variableReferenceKey].Name === variableName){
+            variablesReference[variableReferenceKey].Value = variableValue;
+            break;
+          }
+        }
+      }
+    };
+
     this.hasParameterWithOutValue = function(parameters) {
       var hasWithOutValue = false;
       for (var i in Object.keys(parameters)) {
@@ -405,6 +419,8 @@
 
                         if (params) {
                           result.data.parameters = this.mergeParam(result.data.parameters, params);
+                          result.data.contentData.Dictionary = result.data.contentData.Dictionary || {};
+                          this.setVariablesBasedOnParams(result.data.contentData.Dictionary.Variables, params);
                         }
                         if (this.hasParameterWithOutValue(result.data.parameters) && !config) {
                           //Traduz o nome dos parametros

@@ -1,6 +1,6 @@
 {
   "name": "cronapp-framework-mobile-js",
-  "version": "2.1.14",
+  "version": "2.3.3",
   "homepage": "https://github.com/technecloud/cronapp-framework-mobile-js",
   "authors": [
     "Tarso Matos Araujo <tarso.matos@gmail.com>"
@@ -32,15 +32,16 @@
     "font-awesome": "4.4.0",
     "chart.js": "2.x",
     "ng-file-upload": "12.2.13",
-    "angular-moment": "^1.2.0"
+    "angular-moment": "^1.2.0",
+    "pace": "1.0.2"
   },
-  "_release": "2.1.14",
+  "_release": "2.3.3",
   "_resolution": {
     "type": "version",
-    "tag": "2.1.14",
-    "commit": "3696dce600fd5710e992b194e1ca0470773ece74"
+    "tag": "2.3.3",
+    "commit": "288ec2d0e1acc66ca9764373460d50b138956a64"
   },
   "_source": "https://github.com/technecloud/cronapp-framework-mobile-js.git",
-  "_target": "2.1.14",
+  "_target": "2.3.3",
   "_originalSource": "cronapp-framework-mobile-js"
 }
