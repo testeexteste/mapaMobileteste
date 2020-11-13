@@ -34,6 +34,18 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>io.cronapp</groupId>
+                <artifactId>cronapp-compile-plugin</artifactId>
+                <version>2.7.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
@@ -72,6 +84,19 @@
             <url>https://artifactory.cronapp.io/libs-snapshot</url>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>plugins-libs-release</id>
+            <name>plugins-artifactory-cronapp-release</name>
+            <url>https://artifactory.cronapp.io/libs-release</url>
+            <layout>default</layout>
+        </pluginRepository>
+        <pluginRepository>
+            <id>plugins-libs-snapshot</id>
+            <name>plugins-artifactory-cronapp-snapshot</name>
+            <url>https://artifactory.cronapp.io/libs-snapshot</url>
+        </pluginRepository>
+    </pluginRepositories>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -153,7 +178,7 @@
         <dependency>
             <groupId>io.cronapp</groupId>
             <artifactId>cronapp-framework-java</artifactId>
-            <version>2.3.1</version>
+            <version>2.7.5</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.mobile</groupId>
@@ -163,7 +188,7 @@
         <dependency>
             <groupId>io.cronapp</groupId>
             <artifactId>cronapp-reports-exec</artifactId>
-            <version>2.1.0</version>
+            <version>2.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
@@ -174,12 +199,17 @@
         <dependency>
             <groupId>io.cronapp</groupId>
             <artifactId>cronapi-java</artifactId>
-            <version>2.3.1</version>
+            <version>2.7.8</version>
         </dependency>
         <dependency>
             <groupId>io.cronapp</groupId>
             <artifactId>olingo-odata2-jpa-processor-core</artifactId>
-            <version>2.3.1</version>
+            <version>2.7.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>3.141.59</version>
         </dependency>
     </dependencies>
     <properties>
