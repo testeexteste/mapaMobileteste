@@ -1,0 +1,53 @@
+{
+  "customId": "roles",
+  "queryName": "{{GET_ROLES}}",
+  "screen": "",
+  "sourceType": "entityFullName",
+  "blockly": null,
+  "entitySimpleName": "Role",
+  "entityFullName": "app.entity.Role",
+  "query": "select o.id from Role o where o.user.login \u003d :login",
+  "queryParamsValues": [
+    {
+      "fieldName": "login",
+      "fieldValue": ""
+    }
+  ],
+  "verbs": {
+    "GET": false,
+    "GETAuthorities": null,
+    "POST": false,
+    "POSTAuthorities": null,
+    "PUT": false,
+    "PUTAuthorities": null,
+    "DELETE": false,
+    "DELETEAuthorities": null,
+    "FILTER": true,
+    "FILTERAuthorities": null
+  },
+  "events": {
+    "beforeInsert": null,
+    "beforeUpdate": null,
+    "beforeDelete": null,
+    "afterInsert": null,
+    "afterUpdate": null,
+    "afterDelete": null,
+    "onNavigate": null,
+    "onGetData": null
+  },
+  "defaultValues": {
+    "id": null,
+    "user": null
+  },
+  "security": {
+    "id": null,
+    "user": null
+  },
+  "calcFields": {},
+  "calcFieldsSecurity": {},
+  "errorHandles": {
+    "primaryKey": null,
+    "foreignKey": null
+  },
+  "serviceUrl": "api/cronapi/query/roles/"
+}
